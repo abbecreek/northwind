@@ -4,12 +4,21 @@
 angular.module('products').controller('ProductsController', ['$scope', '$stateParams', '$location', 'Authentication', 'Products',
 	function($scope, $stateParams, $location, Authentication, Products) {
 		$scope.authentication = Authentication;
+	  	$scope.currentPage = 1;
+	  	$scope.pageSize = 10;
+	  	$scope.offset = 0;
+
+	   // Page changed handler
+	   $scope.pageChanged = function() {
+	  		$scope.offset = ($scope.currentPage - 1) * $scope.pageSize;
+	   };
 
 		// Create new Product
 		$scope.create = function() {
 			// Create new Product object
 			var product = new Products ({
-				name: this.name
+				name: this.name,
+				description: this.description
 			});
 
 			// Redirect after save
@@ -25,7 +34,7 @@ angular.module('products').controller('ProductsController', ['$scope', '$statePa
 
 		// Remove existing Product
 		$scope.remove = function(product) {
-			if ( product ) { 
+			if ( product ) {
 				product.$remove();
 
 				for (var i in $scope.products) {
@@ -58,9 +67,14 @@ angular.module('products').controller('ProductsController', ['$scope', '$statePa
 
 		// Find existing Product
 		$scope.findOne = function() {
-			$scope.product = Products.get({ 
+			$scope.product = Products.get({
 				productId: $stateParams.productId
 			});
+		};
+
+		// Search for a product
+		$scope.productSearch = function(product) {
+			$location.path('products/' + product._id);
 		};
 	}
 ]);
